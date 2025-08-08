@@ -30,7 +30,8 @@ import axios from 'axios';
 import { getSocket } from '../lib/realtime';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
-import LOGO_URL from '../images/grafia-logo.png';
+import LOGO_URL from '../images/TYPE_GRAFIA_BAR_ALPHA.png';
+import ICON_CUTOUT from '../images/ICON_CUTOUT.png';
 
 type Track = {
   id: string;
@@ -144,7 +145,7 @@ export default function RequestPage(): JSX.Element {
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="static">
         <Toolbar>
-          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: 28, mr: 1, borderRadius: 0.5 }} />
+          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 24, sm: 28 }, mr: 1, borderRadius: 0.5, filter: 'drop-shadow(0 0 8px rgba(75,19,128,0.4))' }} />
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Grafia Bar - Pedidos de Música
           </Typography>
@@ -171,7 +172,7 @@ export default function RequestPage(): JSX.Element {
             ),
           }}
         />
-        <Paper variant="outlined" sx={{ flex: 1, overflow: 'auto' }}>
+        <Paper variant="outlined" sx={{ flex: 1, overflow: 'auto', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(31,9,52,0.85)' }}>
           {loading && <Typography sx={{ p: 2 }}>Buscando…</Typography>}
           {error && (
             <Typography color="error" sx={{ p: 2 }}>{error}</Typography>
@@ -219,7 +220,7 @@ export default function RequestPage(): JSX.Element {
           </List>
         </Paper>
 
-        <Paper variant="outlined" sx={{ maxHeight: 220, overflow: 'auto' }}>
+        <Paper variant="outlined" sx={{ maxHeight: 220, overflow: 'auto', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(31,9,52,0.85)' }}>
           <Typography variant="subtitle1" sx={{ p: 1 }}>
             Fila
           </Typography>
@@ -279,7 +280,7 @@ export default function RequestPage(): JSX.Element {
         </Paper>
       </Container>
 
-      <Dialog
+       <Dialog
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         fullWidth
@@ -287,7 +288,8 @@ export default function RequestPage(): JSX.Element {
           sx: {
             bgcolor: '#1f0934',
             color: '#dcdcdc',
-            border: '1px solid rgba(75, 19, 128, 0.35)'
+             border: '1px solid rgba(75, 19, 128, 0.35)',
+             backgroundImage: `radial-gradient(circle at 8% 0%, rgba(75,19,128,0.25), transparent 40%), radial-gradient(circle at 92% 100%, rgba(75,19,128,0.25), transparent 40%)`,
           }
         }}
       >

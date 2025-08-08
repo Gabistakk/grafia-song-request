@@ -11,7 +11,7 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
-import LOGO_URL from '../images/grafia-logo.png';
+import LOGO_URL from '../images/TYPE_GRAFIA_BAR_ALPHA.png';
 
 type QueueItem = {
   id: string;
@@ -89,7 +89,7 @@ export default function DisplayPage(): JSX.Element {
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="static">
         <Toolbar>
-          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: 28, mr: 1, borderRadius: 0.5 }} />
+          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 24, sm: 28 }, mr: 1, borderRadius: 0.5, filter: 'drop-shadow(0 0 8px rgba(75,19,128,0.4))' }} />
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Grafia Bar - Display
           </Typography>
@@ -117,7 +117,7 @@ export default function DisplayPage(): JSX.Element {
         </Toolbar>
       </AppBar>
       <Container sx={{ py: 2, flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Paper variant="outlined" sx={{ p: 2 }}>
+        <Paper variant="outlined" sx={{ p: 2, backdropFilter: 'blur(2px)', backgroundColor: 'rgba(31,9,52,0.85)' }}>
           <Typography variant="h5" gutterBottom>
             Tocando agora
           </Typography>
@@ -152,7 +152,7 @@ export default function DisplayPage(): JSX.Element {
           )}
         </Paper>
 
-        <Paper variant="outlined" sx={{ p: 2, flex: 1, overflow: 'auto' }}>
+        <Paper variant="outlined" sx={{ p: 2, flex: 1, overflow: 'auto', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(31,9,52,0.85)' }}>
           <Typography variant="h5" gutterBottom>
             Próximas
           </Typography>

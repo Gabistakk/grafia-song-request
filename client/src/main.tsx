@@ -4,6 +4,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import RequestPage from './pages/RequestPage';
 import DisplayPage from './pages/DisplayPage';
+import BG_PATTERN from './images/STAR.png';
+import BG_WATERMARK from './images/TYPE_GRAFIA_BAR_ALPHA_W.png';
 
 const theme = createTheme({
   palette: {
@@ -16,6 +18,26 @@ const theme = createTheme({
   },
   shape: { borderRadius: 10 },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#000000',
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.72)), url(${BG_PATTERN}), url(${BG_WATERMARK})`,
+          backgroundRepeat: 'no-repeat, repeat, no-repeat',
+          backgroundPosition: '0 0, center center, right -4vw bottom -4vh',
+          backgroundSize: 'auto, 320px 320px, min(42vw, 560px) auto',
+          backgroundAttachment: 'fixed, fixed, fixed',
+        },
+        '@media (max-width:900px)': {
+          body: {
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.76), rgba(0,0,0,0.76)), url(${BG_PATTERN})`,
+            backgroundRepeat: 'no-repeat, repeat',
+            backgroundPosition: '0 0, center center',
+            backgroundSize: 'auto, 260px 260px',
+          },
+        },
+      },
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
