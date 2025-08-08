@@ -22,18 +22,51 @@ const theme = createTheme({
       styleOverrides: {
         body: {
           backgroundColor: '#000000',
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.72)), url(${BG_PATTERN}), url(${BG_WATERMARK})`,
-          backgroundRepeat: 'no-repeat, repeat, no-repeat',
-          backgroundPosition: '0 0, center center, right -4vw bottom -4vh',
-          backgroundSize: 'auto, 320px 320px, min(42vw, 560px) auto',
-          backgroundAttachment: 'fixed, fixed, fixed',
+          position: 'relative',
+          // Stars layer as a rotated overlay behind content (darker via internal gradient)
+          '&::before': {
+            content: '""',
+            position: 'fixed',
+            inset: 0,
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${BG_PATTERN})`,
+            backgroundRepeat: 'no-repeat, repeat',
+            backgroundPosition: '0 0, left -10vw top -10vh',
+            backgroundSize: 'auto, 220px 220px',
+            opacity: 1,
+            filter: 'none',
+            transform: 'rotate(-1.5deg) scale(1.04)',
+            transformOrigin: '50% 50%',
+            pointerEvents: 'none',
+            zIndex: 0,
+          },
+          // Watermark above the stars (not dimmed)
+          '&::after': {
+            content: '""',
+            position: 'fixed',
+            inset: 0,
+            backgroundImage: `url(${BG_WATERMARK})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center',
+            backgroundSize: 'min(48vw, 680px) auto',
+            pointerEvents: 'none',
+            zIndex: 1,
+          },
+        },
+        '#root': {
+          position: 'relative',
+          zIndex: 2,
         },
         '@media (max-width:900px)': {
           body: {
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.76), rgba(0,0,0,0.76)), url(${BG_PATTERN})`,
-            backgroundRepeat: 'no-repeat, repeat',
-            backgroundPosition: '0 0, center center',
-            backgroundSize: 'auto, 260px 260px',
+            '&::before': {
+              backgroundPosition: 'left -15vw top -15vh',
+              backgroundSize: '180px 180px',
+              filter: 'none',
+              transform: 'rotate(-1deg) scale(1.03)',
+            },
+            '&::after': {
+              backgroundSize: '70vw auto',
+            }
           },
         },
       },

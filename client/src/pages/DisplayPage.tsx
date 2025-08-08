@@ -89,7 +89,7 @@ export default function DisplayPage(): JSX.Element {
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="static">
         <Toolbar>
-          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 24, sm: 28 }, mr: 1, borderRadius: 0.5, filter: 'drop-shadow(0 0 8px rgba(75,19,128,0.4))' }} />
+          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 34, sm: 44, md: 52 }, mr: 1.75, borderRadius: 0.5, filter: 'drop-shadow(0 0 10px rgba(75,19,128,0.5))' }} />
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Grafia Bar - Display
           </Typography>

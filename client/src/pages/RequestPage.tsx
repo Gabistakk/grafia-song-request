@@ -31,7 +31,6 @@ import { getSocket } from '../lib/realtime';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
 import LOGO_URL from '../images/TYPE_GRAFIA_BAR_ALPHA.png';
-import ICON_CUTOUT from '../images/ICON_CUTOUT.png';
 
 type Track = {
   id: string;
@@ -145,7 +144,7 @@ export default function RequestPage(): JSX.Element {
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="static">
         <Toolbar>
-          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 24, sm: 28 }, mr: 1, borderRadius: 0.5, filter: 'drop-shadow(0 0 8px rgba(75,19,128,0.4))' }} />
+          <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 34, sm: 44, md: 52 }, mr: 1.75, borderRadius: 0.5, filter: 'drop-shadow(0 0 10px rgba(75,19,128,0.5))' }} />
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Grafia Bar - Pedidos de Música
           </Typography>
