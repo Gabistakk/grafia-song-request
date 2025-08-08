@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -6,6 +6,8 @@ import {
   Container,
   TextField,
   InputAdornment,
+  IconButton,
+  Tooltip,
   List,
   ListItem,
   ListItemButton,
@@ -25,7 +27,8 @@ import {
   Skeleton,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-// import ClearIcon from '@mui/icons-material/ClearAll';
+import ClearIcon from '@mui/icons-material/Close';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import axios from 'axios';
 import { getSocket } from '../lib/realtime';
 
@@ -60,11 +63,25 @@ export default function RequestPage(): JSX.Element {
   const [snackMsg, setSnackMsg] = useState('');
   const [snackSeverity, setSnackSeverity] = useState<'success' | 'error' | 'info'>('info');
   const [queueLoading, setQueueLoading] = useState(true);
+  const searchRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     // Persist requester name for convenience
     const saved = localStorage.getItem('grafia_requester_name');
     if (saved) setName(saved);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const isCmdK = (e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K');
+      const isSlash = !e.ctrlKey && !e.metaKey && e.key === '/';
+      if (isCmdK || isSlash) {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, []);
 
   useEffect(() => {
@@ -142,7 +159,7 @@ export default function RequestPage(): JSX.Element {
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 34, sm: 44, md: 52 }, mr: 1.75, borderRadius: 0.5, filter: 'drop-shadow(0 0 10px rgba(75,19,128,0.5))' }} />
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -157,6 +174,7 @@ export default function RequestPage(): JSX.Element {
           onChange={(e) => setQuery(e.target.value)}
           fullWidth
           autoFocus
+          inputRef={searchRef}
           placeholder="Buscar música ou artista"
           InputProps={{
             startAdornment: (
@@ -166,12 +184,20 @@ export default function RequestPage(): JSX.Element {
             ),
             endAdornment: (
               <InputAdornment position="end">
-                {loading ? <CircularProgress size={20} /> : null}
+                {loading ? (
+                  <CircularProgress size={20} />
+                ) : query ? (
+                  <Tooltip title="Limpar busca">
+                    <IconButton size="small" aria-label="limpar busca" onClick={() => setQuery('')} edge="end">
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                ) : null}
               </InputAdornment>
             ),
           }}
         />
-        <Paper variant="outlined" sx={{ flex: 1, overflow: 'auto', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(31,9,52,0.85)' }}>
+        <Paper variant="outlined" sx={{ flex: 1, overflow: 'auto', backgroundColor: 'rgba(31,9,52,0.85)' }}>
           {loading && <Typography sx={{ p: 2 }}>Buscando…</Typography>}
           {error && (
             <Typography color="error" sx={{ p: 2 }}>{error}</Typography>
@@ -219,7 +245,7 @@ export default function RequestPage(): JSX.Element {
           </List>
         </Paper>
 
-        <Paper variant="outlined" sx={{ maxHeight: 220, overflow: 'auto', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(31,9,52,0.85)' }}>
+        <Paper variant="outlined" sx={{ maxHeight: 220, overflow: 'auto', backgroundColor: 'rgba(31,9,52,0.85)' }}>
           <Typography variant="subtitle1" sx={{ p: 1 }}>
             Fila
           </Typography>
@@ -244,7 +270,14 @@ export default function RequestPage(): JSX.Element {
                   primaryTypographyProps={{ variant: 'subtitle1', sx: { fontWeight: 700 } }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                   primary={`Tocando agora: ${nowPlaying.title}`}
-                  secondary={`${nowPlaying.artist} • Pedido por: ${nowPlaying.requestedBy}`}
+                  secondary={
+                    <>
+                      {`${nowPlaying.artist} • Pedido por: `}
+                      <Box component="span" sx={{ color: 'text.primary', fontWeight: 800, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
+                        {nowPlaying.requestedBy}
+                      </Box>
+                    </>
+                  }
                 />
               </ListItem>
             )}
@@ -268,7 +301,14 @@ export default function RequestPage(): JSX.Element {
                   primaryTypographyProps={{ variant: 'body1', sx: { fontWeight: 600 } }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                   primary={q.title}
-                  secondary={`${q.artist} • Pedido por: ${q.requestedBy}`}
+                  secondary={
+                    <>
+                      {`${q.artist} • Pedido por: `}
+                      <Box component="span" sx={{ color: 'text.primary', fontWeight: 800, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
+                        {q.requestedBy}
+                      </Box>
+                    </>
+                  }
                 />
               </ListItem>
             ))}
@@ -288,15 +328,25 @@ export default function RequestPage(): JSX.Element {
             bgcolor: '#1f0934',
             color: '#dcdcdc',
              border: '1px solid rgba(75, 19, 128, 0.35)',
-             backgroundImage: `radial-gradient(circle at 8% 0%, rgba(75,19,128,0.25), transparent 40%), radial-gradient(circle at 92% 100%, rgba(75,19,128,0.25), transparent 40%)`,
+             backgroundImage: `radial-gradient(circle at 8% 0%, rgba(75,19,128,0.22), transparent 40%), radial-gradient(circle at 92% 100%, rgba(75,19,128,0.22), transparent 40%)`,
+             boxShadow: '0 0 24px rgba(75, 19, 128, 0.25)',
+             borderRadius: 2,
           }
         }}
       >
-        <DialogTitle sx={{ color: '#dcdcdc', fontWeight: 700 }}>Quem está pedindo?</DialogTitle>
+          <DialogTitle sx={{ color: 'text.primary', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <PersonOutlineIcon sx={{ color: 'primary.main' }} />
+            Quem está pedindo?
+          </DialogTitle>
         <DialogContent>
           <TextField
             value={name}
             onChange={(e) => setName(e.target.value)}
+             onKeyDown={(e) => {
+               if (e.key === 'Enter' && name.trim() && !isAdding) {
+                 addToQueue();
+               }
+             }}
             placeholder="Seu nome"
             fullWidth
             autoFocus
@@ -317,8 +367,8 @@ export default function RequestPage(): JSX.Element {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)} sx={{ color: '#dcdcdc' }}>Cancelar</Button>
-          <Button onClick={addToQueue} variant="contained" color="primary" disabled={!name.trim() || isAdding}>
+          <Button onClick={() => setConfirmOpen(false)} variant="outlined" color="primary" sx={{ '&:hover': { bgcolor: 'rgba(75,19,128,0.08)' } }}>Cancelar</Button>
+          <Button onClick={addToQueue} variant="contained" color="primary" disabled={!name.trim() || isAdding} sx={{ boxShadow: '0 0 12px rgba(75, 19, 128, 0.35)' }}>
             Confirmar
           </Button>
         </DialogActions>

@@ -56,6 +56,31 @@ const theme = createTheme({
           position: 'relative',
           zIndex: 2,
         },
+        // Hide scrollbars globally but keep scrolling functional
+        'html, body, #root': {
+          msOverflowStyle: 'none', // IE/Edge
+          scrollbarWidth: 'none', // Firefox
+        },
+        '*': {
+          scrollbarWidth: 'none', // Firefox
+        },
+        '*::-webkit-scrollbar': {
+          width: 0,
+          height: 0,
+        },
+        '*::-webkit-scrollbar-thumb': {
+          backgroundColor: 'transparent',
+          border: 'none',
+        },
+        // Keyframes globais para animações
+        '@keyframes dialogPop': {
+          '0%': { transform: 'scale(0.98)', opacity: 0 },
+          '100%': { transform: 'scale(1)', opacity: 1 },
+        },
+        '@keyframes fadeIn': {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
         '@media (max-width:900px)': {
           body: {
             '&::before': {
@@ -68,6 +93,14 @@ const theme = createTheme({
               backgroundSize: '70vw auto',
             }
           },
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          animation: 'dialogPop .24s cubic-bezier(0.2, 0.8, 0.2, 1)',
+          transition: 'box-shadow .2s ease, border-color .2s ease',
         },
       },
     },
@@ -84,13 +117,39 @@ const theme = createTheme({
         root: {
           backgroundColor: '#1f0934',
           border: '1px solid rgba(75, 19, 128, 0.35)',
+          transition: 'background-color .2s ease, border-color .2s ease, box-shadow .2s ease',
         },
       },
     },
     MuiButton: {
       styleOverrides: {
-        containedPrimary: {
-          boxShadow: '0 0 8px rgba(75, 19, 128, 0.6)',
+        root: {
+          transition: 'transform .15s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease',
+          '&:hover': { transform: 'translateY(-1px)' },
+          '&.Mui-focusVisible': { boxShadow: '0 0 0 3px rgba(75, 19, 128, 0.35)' },
+        },
+        containedPrimary: { boxShadow: '0 0 8px rgba(75, 19, 128, 0.6)' },
+        outlinedPrimary: {
+          borderColor: 'rgba(75, 19, 128, 0.6)',
+          '&:hover': { borderColor: '#4b1380', backgroundColor: 'rgba(75,19,128,0.08)' },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          transition: 'transform .15s ease, background-color .2s ease',
+          '&:hover': { transform: 'translateY(-1px)' },
+          '&.Mui-focusVisible': { boxShadow: '0 0 0 3px rgba(75, 19, 128, 0.35)' },
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          transition: 'transform .15s ease, background-color .2s ease',
+          '&:hover': { transform: 'translateX(2px)', backgroundColor: 'rgba(255,255,255,0.04)' },
+          '&.Mui-focusVisible': { boxShadow: '0 0 0 3px rgba(75, 19, 128, 0.35)' },
         },
       },
     },

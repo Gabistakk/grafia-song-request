@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { getSocket } from '../lib/realtime';
 import { AppBar, Toolbar, Typography, Container, List, ListItem, ListItemAvatar, Avatar, ListItemText, Paper, Box, Button, Stack, IconButton, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip, Snackbar, Alert, Skeleton } from '@mui/material';
+import DevicesIcon from '@mui/icons-material/Devices';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -46,13 +49,13 @@ export default function DisplayPage(): JSX.Element {
     };
     fetchAuth();
     const authTimer = setInterval(fetchAuth, 5000);
-    const socket: Socket = io(API_BASE, { transports: ['websocket'] });
+    const socket: Socket = getSocket();
     socket.on('queue:update', ({ nowPlaying, queue }) => {
       setQueue(queue || []);
       setNowPlaying(nowPlaying || null);
     });
     return () => {
-      socket.disconnect();
+      socket.off('queue:update');
       clearInterval(authTimer);
     };
   }, []);
@@ -87,7 +90,7 @@ export default function DisplayPage(): JSX.Element {
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           <Box component="img" src={LOGO_URL} alt="Grafia Bar" sx={{ height: { xs: 34, sm: 44, md: 52 }, mr: 1.75, borderRadius: 0.5, filter: 'drop-shadow(0 0 10px rgba(75,19,128,0.5))' }} />
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -143,7 +146,14 @@ export default function DisplayPage(): JSX.Element {
                   primaryTypographyProps={{ variant: 'h5', sx: { fontWeight: 700 } }}
                   secondaryTypographyProps={{ variant: 'body1' }}
                   primary={nowPlaying.title}
-                  secondary={`${nowPlaying.artist} • Pedido por: ${nowPlaying.requestedBy}`}
+                  secondary={
+                    <>
+                      {`${nowPlaying.artist} • Pedido por: `}
+                      <Box component="span" sx={{ color: 'text.primary', fontWeight: 800, fontSize: { xs: '1rem', sm: '1.05rem' } }}>
+                        {nowPlaying.requestedBy}
+                      </Box>
+                    </>
+                  }
                 />
               </ListItem>
             </List>
@@ -152,7 +162,7 @@ export default function DisplayPage(): JSX.Element {
           )}
         </Paper>
 
-        <Paper variant="outlined" sx={{ p: 2, flex: 1, overflow: 'auto', backdropFilter: 'blur(2px)', backgroundColor: 'rgba(31,9,52,0.85)' }}>
+        <Paper variant="outlined" sx={{ p: 2, flex: 1, overflow: 'auto', backgroundColor: 'rgba(31,9,52,0.85)' }}>
           <Typography variant="h5" gutterBottom>
             Próximas
           </Typography>
@@ -214,7 +224,14 @@ export default function DisplayPage(): JSX.Element {
                                 primaryTypographyProps={{ variant: 'subtitle1', sx: { fontWeight: 600 } }}
                                 secondaryTypographyProps={{ variant: 'body2' }}
                                 primary={q.title}
-                                secondary={`${q.artist} • Pedido por: ${q.requestedBy}`}
+                                secondary={
+                                  <>
+                                    {`${q.artist} • Pedido por: `}
+                                    <Box component="span" sx={{ color: 'text.primary', fontWeight: 800, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
+                                      {q.requestedBy}
+                                    </Box>
+                                  </>
+                                }
                               />
                             </ListItem>
                           )}
@@ -237,15 +254,32 @@ export default function DisplayPage(): JSX.Element {
           sx: {
             bgcolor: '#1f0934',
             color: '#dcdcdc',
-            border: '1px solid rgba(75, 19, 128, 0.35)'
+            border: '1px solid rgba(75, 19, 128, 0.35)',
+            boxShadow: '0 0 24px rgba(75, 19, 128, 0.25)',
+            borderRadius: 2,
           }
         }}
       >
-        <DialogTitle sx={{ color: '#dcdcdc', fontWeight: 700 }}>Selecionar dispositivo</DialogTitle>
+        <DialogTitle sx={{ color: '#dcdcdc', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <DevicesIcon sx={{ color: 'primary.main' }} />
+          Selecionar dispositivo
+        </DialogTitle>
         <DialogContent>
           <List>
             {devices.map((d) => (
-              <ListItem key={d.id} disablePadding>
+              <ListItem
+                key={d.id}
+                disablePadding
+                secondaryAction={d.is_active ? <CheckCircleIcon color="success" sx={{ animation: 'fadeIn .28s ease' }} /> : undefined}
+                sx={{
+                  '&:hover': {
+                    '& .MuiButton-root': {
+                      transform: 'translateX(2px)',
+                      boxShadow: '0 0 12px rgba(75, 19, 128, 0.25)'
+                    }
+                  }
+                }}
+              >
                 <Button
                   fullWidth
                   variant={d.is_active ? 'contained' : 'outlined'}
